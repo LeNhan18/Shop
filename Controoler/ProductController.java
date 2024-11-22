@@ -1,10 +1,8 @@
 package com.project.shopapp.Controoler;
 
-import Service.IMP.FileServiceIMP;
+
 import com.project.shopapp.DTOS.ProductDTO;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,9 +23,6 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/Product")
 public class ProductController {
-
-    @Autowired
-    FileServiceIMP filess;
 
     @GetMapping("")
     public ResponseEntity<?> getAllProducts(@RequestParam String limit , @RequestParam int page) {
