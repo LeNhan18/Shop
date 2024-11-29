@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,17 +31,21 @@ public class ProductController {
     }
 //    @PostMapping( value ="",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 //    public ResponseEntity<?>
-    @PostMapping(value="",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> InsertProduct(@Valid @RequestBody ProductDTO productDTO,
-             @RequestPart("image") MultipartFile file
-            ,BindingResult bindingResult) {
-        try {
-            if (bindingResult.hasErrors()) {
-                List<String> errors = bindingResult.getFieldErrors()
-                        .stream()
-                        .map(FieldError::getDefaultMessage)
-                        .toList();
-                return ResponseEntity.badRequest().body(errors);
+@PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+public ResponseEntity<?> InsertProduct(@ModelAttribute ProductDTO productDTO, BindingResult bindingResult) {
+    try {
+        if (bindingResult.hasErrors()) {
+            List<String> errors = bindingResult.getFieldErrors()
+                    .stream()
+                    .map(FieldError::getDefaultMessage)
+                    .toList();
+            return ResponseEntity.badRequest().body(errors);
+        }
+        List<MultipartFile> files = productDTO.getFile();
+        files =files == null ? new ArrayList<MultipartFile>() : files ;
+        for (MultipartFile file : files) {
+            if(file.getSize() ==0){
+                continue;
             }
             if(file != null) {
                 //Kiem tra kich thuoc cua file va dinh dang
@@ -49,24 +54,27 @@ public class ProductController {
                             .body("File is too large Maximum size is 1000mb");
                 }
                 String contentType = file.getContentType();
-                if(contentType == null || contentType.startsWith("image/")){
+                if(contentType == null || !contentType.startsWith("image/")){
                     return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
                             .body("File must be an image");
                 }
+                String fileName = storeFile(file);
+                //Thay thế hàm này với code của bạn để lưu file
+                //Lưu vào đối tượng product trong DB =>làm sau
+                //Lưu vào bảng products image
             }
-
-
-        }catch (Exception e) {
-            e.printStackTrace();
         }
-        return ResponseEntity.ok("Product insert successfully");
+    } catch (Exception e) {
+        e.printStackTrace();
     }
+    return ResponseEntity.ok("Product insert successfully");
+}
     private String storeFile(MultipartFile fileName) throws IOException {
          String fileN = StringUtils.cleanPath(fileName.getOriginalFilename());
          //Them UUID vao truoc ten file de file la duy nhat
         String uniqueFile = UUID.randomUUID().toString();
         //Duong dan den thu muc chua file
-        java.nio.file.Path file = Paths.get("D:/Uploads" );
+        java.nio.file.Path file = Paths.get("Uploads" );
         //Kiem tra va tao thu muc neu no khong ton tai
         if(!Files.exists(file)){
           Files.createDirectory(file);  //Tao thu muc neu no khong ton tai
