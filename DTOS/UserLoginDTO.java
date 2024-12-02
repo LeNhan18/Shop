@@ -19,5 +19,4 @@ public class UserLoginDTO {
     @JsonProperty("password")
     @NotBlank(message = "password cannot be blank")
     private String password;
-
 }

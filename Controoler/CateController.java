@@ -21,7 +21,7 @@ public class CateController {
 
 //    @PostMapping(value=" ",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 //    public ResponseEntity<?> CreateProduct
-    @GetMapping("")//http://localhost:8088/cate
+    @GetMapping("")//
     public ResponseEntity<?> nhanle(@RequestParam("page") int page,@RequestParam("limit") int limit) {
         return  ResponseEntity.ok("Nx`hanle"+" "+page+" "+limit);
     }
