@@ -13,6 +13,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+
 public class UserDTO {
     @JsonProperty("fullname")
     private String fullname;
