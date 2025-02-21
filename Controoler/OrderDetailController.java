@@ -33,7 +33,8 @@ public class OrderDetailController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getAllOrderDetails(@Valid @PathVariable("id") Long id)  {
 
-        return ResponseEntity.ok().body("Get all order details successfully "+ id);
+//        return ResponseEntity.ok().body("Get all order details successfully "+ id);
+        return ResponseEntity.ok().body("Le Thành Nhan "+ id);
     }
     //Lấy ra danh sách của order details của một cái order nào do
     @GetMapping("/order/{id}")

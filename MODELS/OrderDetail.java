@@ -17,17 +17,19 @@ public class OrderDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name ="token")
-    private String token;
-    @Column(name ="token_type")
-    private String tokenType;
-    @Column(name ="expiration")
-    private LocalDateTime expiration;
-    @Column(name ="revoked")
-    private Boolean revoked;
-    @Column(name ="expired")
-    private Boolean expired;
+
     @ManyToOne
     @JoinColumn(name ="user_id")
     private User user;
+
+    @ManyToOne
+    @JoinColumn(name ="product_id")
+    private Product product;
+
+    private Float price;
+
+    private int numberOfProducts;
+
+    @Column(name = "color")
+    private String color;
 }
