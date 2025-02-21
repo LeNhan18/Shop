@@ -28,6 +28,8 @@ public class Product extends BaseEntity {
 
     @Column(name = "description")
     private String description;
+    @Column(nullable = false, unique = true)
+    private String title;
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category categoryId;
