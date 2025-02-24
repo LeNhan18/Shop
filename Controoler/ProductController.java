@@ -2,7 +2,10 @@ package com.project.shopapp.Controoler;
 
 
 import com.project.shopapp.DTOS.ProductDTO;
+import com.project.shopapp.Service.IMP.IMPProductService;
+import com.project.shopapp.Service.ProductService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,8 +26,9 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/Product")
+@RequiredArgsConstructor
 public class ProductController {
-
+    private final ProductService productService;
     @GetMapping("")
     public ResponseEntity<?> getAllProducts(@RequestParam String limit , @RequestParam int page) {
         return ResponseEntity.ok("limit: "+limit+" page: "+page);
@@ -64,6 +68,8 @@ public ResponseEntity<?> InsertProduct(@ModelAttribute ProductDTO productDTO, Bi
                 //Lưu vào bảng products image
             }
         }
+        productService.CreateProduct(productDTO);
+        return ResponseEntity.ok("Product insert successfully");
     } catch (Exception e) {
         e.printStackTrace();
     }

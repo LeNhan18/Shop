@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ProductRespository extends JpaRepository<Product,Long> {
     boolean existsByTitle(String title);
+    boolean existsByName(String name);
     Page<Product> findAll(Pageable pageable);//Phân trang
 
 }
