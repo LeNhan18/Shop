@@ -3,21 +3,27 @@ package com.project.shopapp.Service;
 import com.project.shopapp.DTOS.ProductDTO;
 import com.project.shopapp.DTOS.ProductImageDTO;
 import com.project.shopapp.Exception.DataNotFoundException;
+import com.project.shopapp.Exception.InvalidParamException;
 import com.project.shopapp.MODELS.Category;
 import com.project.shopapp.MODELS.Product;
 import com.project.shopapp.MODELS.ProductImage;
 import com.project.shopapp.Respository.CategoryRespository;
+import com.project.shopapp.Respository.ProductImageRespository;
 import com.project.shopapp.Respository.ProductRespository;
 import com.project.shopapp.Service.IMP.IMPProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
+
 import java.util.Optional;
 
+@Service
 @RequiredArgsConstructor
 public class ProductService implements IMPProductService {
     private final ProductRespository productRespository;
     private final CategoryRespository categoryRespository;
+    private final ProductImageRespository productImageRespository;
     @Override
     public Product CreateProduct(ProductDTO productDTO) throws DataNotFoundException{
         Category existingCategory =categoryRespository.findById(productDTO.getCategoryId())
@@ -72,13 +78,20 @@ public class ProductService implements IMPProductService {
     public boolean existByName(String name) {
         return productRespository.existsByName(name);
     }
-    private ProductImage createProductImage(Long id , ProductImageDTO productImage) throws Exception{
+    @Override
+    public ProductImage createProductImage(Long id , ProductImageDTO productImage) throws Exception{
         Product existingProduct =productRespository.findById(productImage.getProductId())
                 .orElseThrow(()->new DataNotFoundException("Cannot find with id"));
-        if(existingProduct!= null){
-
+        ProductImage newProductImage = ProductImage.builder()
+                .product(existingProduct)
+                .imageUrl(productImage.getImageUrl())
+                .build();
+        // Không cho insert quá 5 ảnh
+        int size =productImageRespository.findProductImageById(id).size();
+        if(size >= 5){
+            throw new InvalidParamException("Numbers of image must be <= 5");
         }
-        return null;
+        return productImageRespository.save(newProductImage);
     }
 
 }

@@ -2,6 +2,9 @@ package com.project.shopapp.Controoler;
 
 
 import com.project.shopapp.DTOS.ProductDTO;
+import com.project.shopapp.DTOS.ProductImageDTO;
+import com.project.shopapp.MODELS.Product;
+import com.project.shopapp.MODELS.ProductImage;
 import com.project.shopapp.Service.IMP.IMPProductService;
 import com.project.shopapp.Service.ProductService;
 import jakarta.validation.Valid;
@@ -45,6 +48,7 @@ public ResponseEntity<?> InsertProduct(@ModelAttribute ProductDTO productDTO, Bi
                     .toList();
             return ResponseEntity.badRequest().body(errors);
         }
+        Product newProduct = productService.CreateProduct(productDTO);
         List<MultipartFile> files = productDTO.getFile();
         files =files == null ? new ArrayList<MultipartFile>() : files ;
         for (MultipartFile file : files) {
@@ -64,6 +68,9 @@ public ResponseEntity<?> InsertProduct(@ModelAttribute ProductDTO productDTO, Bi
                 }
                 String fileName = storeFile(file);
                 //Thay thế hàm này với code của bạn để lưu file
+              ProductImage productImage= productService.createProductImage(newProduct.getId(), ProductImageDTO.builder()
+                                .imageUrl(fileName)
+                        .build());
                 //Lưu vào đối tượng product trong DB =>làm sau
                 //Lưu vào bảng products image
             }
