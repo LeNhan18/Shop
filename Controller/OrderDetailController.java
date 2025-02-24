@@ -1,4 +1,4 @@
-package com.project.shopapp.Controoler;
+package com.project.shopapp.Controller;
 
 
 import com.project.shopapp.DTOS.OrderDetailDTO;

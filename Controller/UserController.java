@@ -1,4 +1,4 @@
-package com.project.shopapp.Controoler;
+package com.project.shopapp.Controller;
 
 
 import com.project.shopapp.DTOS.UserDTO;
@@ -10,7 +10,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 @RestController
 @RequestMapping("/users")
