@@ -6,6 +6,7 @@ import com.project.shopapp.DTOS.ProductImageDTO;
 import com.project.shopapp.MODELS.Product;
 import com.project.shopapp.MODELS.ProductImage;
 import com.project.shopapp.Service.ProductService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -35,8 +36,9 @@ public class ProductController {
     }
 //    @PostMapping( value ="",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 //    public ResponseEntity<?>
-@PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-public ResponseEntity<?> InsertProduct(@ModelAttribute ProductDTO productDTO, BindingResult bindingResult) {
+@PostMapping("/1")
+public ResponseEntity<?> createProduct(@Valid @RequestBody ProductDTO productDTO,
+BindingResult bindingResult) {
     try {
         if (bindingResult.hasErrors()) {
             List<String> errors = bindingResult.getFieldErrors()
@@ -46,32 +48,11 @@ public ResponseEntity<?> InsertProduct(@ModelAttribute ProductDTO productDTO, Bi
             return ResponseEntity.badRequest().body(errors);
         }
         Product newProduct = productService.CreateProduct(productDTO);
-        List<MultipartFile> files = productDTO.getFile();
-        files =files == null ? new ArrayList<MultipartFile>() : files ;
-        for (MultipartFile file : files) {
-            if(file.getSize() ==0){
-                continue;
-            }
-            if(file != null) {
-                //Kiem tra kich thuoc cua file va dinh dang
-                if(file.getSize()>10*1024*1024) {
-                    return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE)
-                            .body("File is too large Maximum size is 1000mb");
-                }
-                String contentType = file.getContentType();
-                if(contentType == null || !contentType.startsWith("image/")){
-                    return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
-                            .body("File must be an image");
-                }
-                String fileName = storeFile(file);
-                //Thay thế hàm này với code của bạn để lưu file
-              ProductImage productImage= productService.createProductImage(newProduct.getId(), ProductImageDTO.builder()
-                                .imageUrl(fileName)
-                        .build());
+
                 //Lưu vào đối tượng product trong DB =>làm sau
                 //Lưu vào bảng products image
-            }
-        }
+
+
         productService.CreateProduct(productDTO);
         return ResponseEntity.ok("Product insert successfully");
     } catch (Exception e) {
@@ -79,7 +60,44 @@ public ResponseEntity<?> InsertProduct(@ModelAttribute ProductDTO productDTO, Bi
     }
     return ResponseEntity.ok("Product insert successfully");
 }
-    private String storeFile(MultipartFile fileName) throws IOException {
+    @PostMapping(value = "uploads/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    private ResponseEntity<?> createImage(@PathVariable("id") Long id, @ModelAttribute("file") List<MultipartFile> files) {
+        try {
+            Product existingProduct = productService.getProductById(id);
+            files = files == null ? new ArrayList<MultipartFile>() : files;
+            List<ProductImage> productImages = new ArrayList<>();
+            for (MultipartFile file : files) {
+                if (file.getSize() == 0) {
+                    continue;
+                }
+                if (file != null) {
+                    //Kiem tra kich thuoc cua file va dinh dang
+                    if (file.getSize() > 10 * 1024 * 1024) {
+                        return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE)
+                                .body("File is too large Maximum size is 1000mb");
+                    }
+                    String contentType = file.getContentType();
+                    if (contentType == null || !contentType.startsWith("image/")) {
+                        return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
+                                .body("File must be an image");
+                    }
+                    String fileName = storeFile(file);
+                    //Thay thế hàm này với code của bạn để lưu file
+                    ProductImage productImage = productService.createProductImage(existingProduct.getId(), ProductImageDTO.builder()
+                            .imageUrl(fileName)
+                            .build());
+                    productImages.add(productImage);
+                    //Lưu vào đối tượng product trong DB =>làm sau
+                    //Lưu vào bảng products image
+                }
+
+            }
+            return ResponseEntity.ok().body(productImages);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+        private String storeFile(MultipartFile fileName) throws IOException {
          String fileN = StringUtils.cleanPath(fileName.getOriginalFilename());
          //Them UUID vao truoc ten file de file la duy nhat
         String uniqueFile = UUID.randomUUID().toString();

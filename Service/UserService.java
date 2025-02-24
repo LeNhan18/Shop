@@ -12,12 +12,12 @@ import lombok.SneakyThrows;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
-@Service
-@RequiredArgsConstructor
-public class UserService implements IMPUserService {
-    private final RoleRespository roleRespository;
-    private UserRespository userRespository;
-    @SneakyThrows
+@Service //Xác định lớp này la lớp dịch vuj trong spring
+@RequiredArgsConstructor // Auto create các Contructor với các final field
+public class UserService implements IMPUserService { //Lớp trien khai interface IMPUserService
+    private final RoleRespository roleRespository; //Kho lưu truu role duoc tiem qua constructor
+    private UserRespository userRespository; //
+    @SneakyThrows // ẩn việc xử ly ngoại lệ auto throw neeus có
     @Override
     public User createUser(UserDTO userDTO) {
         String phoneNumber = userDTO.getPhoneNumber();
