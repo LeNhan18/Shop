@@ -31,10 +31,12 @@ public class ProductService implements IMPProductService {
         Product product = Product.builder()
                 .name(productDTO.getProductName())
                 .price(productDTO.getPrice())
+                .title(productDTO.getTitle())
                 .thumbnail(productDTO.getThumbnail())
                 .categoryId(existingCategory)
                 .build();
-        return productRespository.save(product);
+        Product savedProduct = productRespository.save(product);
+        return savedProduct;
     }
 
     @Override
@@ -59,6 +61,7 @@ public class ProductService implements IMPProductService {
             existingProduct.setName(existingProduct.getName());
             existingProduct.setCategoryId(existingCategory);
             existingProduct.setPrice(productDTO.getPrice());
+            existingProduct.setTitle(productDTO.getTitle());
             existingProduct.setDescription(productDTO.getDescription());
             existingProduct.setThumbnail(productDTO.getThumbnail());
         }
@@ -80,7 +83,7 @@ public class ProductService implements IMPProductService {
     }
     @Override
     public ProductImage createProductImage(Long id , ProductImageDTO productImage) throws Exception{
-        Product existingProduct =productRespository.findById(productImage.getProductId())
+        Product existingProduct =productRespository.findById(id)
                 .orElseThrow(()->new DataNotFoundException("Cannot find with id"));
         ProductImage newProductImage = ProductImage.builder()
                 .product(existingProduct)
@@ -88,8 +91,9 @@ public class ProductService implements IMPProductService {
                 .build();
         // Không cho insert quá 5 ảnh
         int size =productImageRespository.findProductImageById(id).size();
-        if(size >= 5){
-            throw new InvalidParamException("Numbers of image must be <= 5");
+        if(size >= ProductImage.MAXIMUM_IMAGES_PER_PRODUCT){
+            throw new InvalidParamException("Numbers of image must be <= "
+            +ProductImage.MAXIMUM_IMAGES_PER_PRODUCT);
         }
         return productImageRespository.save(newProductImage);
     }
