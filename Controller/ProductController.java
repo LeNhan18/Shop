@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
@@ -61,10 +62,13 @@ BindingResult bindingResult) {
     return ResponseEntity.ok("Product insert successfully");
 }
     @PostMapping(value = "uploads/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    private ResponseEntity<?> createImage(@PathVariable("id") Long id, @ModelAttribute("file") List<MultipartFile> files) {
+    private ResponseEntity<?> createImage(@PathVariable("id") Long id, @RequestParam("files") List<MultipartFile> files) {
         try {
             Product existingProduct = productService.getProductById(id);
             files = files == null ? new ArrayList<MultipartFile>() : files;
+            if(files.size()> ProductImage.MAXIMUM_IMAGES_PER_PRODUCT){
+                return ResponseEntity.badRequest().body("You can only Upload maximum 5 images");
+            }
             List<ProductImage> productImages = new ArrayList<>();
             for (MultipartFile file : files) {
                 if (file.getSize() == 0) {
@@ -97,21 +101,49 @@ BindingResult bindingResult) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-        private String storeFile(MultipartFile fileName) throws IOException {
-         String fileN = StringUtils.cleanPath(fileName.getOriginalFilename());
-         //Them UUID vao truoc ten file de file la duy nhat
-        String uniqueFile = UUID.randomUUID().toString();
-        //Duong dan den thu muc chua file
-        java.nio.file.Path file = Paths.get("Uploads" );
-        //Kiem tra va tao thu muc neu no khong ton tai
-        if(!Files.exists(file)){
-          Files.createDirectory(file);  //Tao thu muc neu no khong ton tai
+    private String storeFile(MultipartFile file) throws IOException {
+        if(!isImageFile(file) && file.getOriginalFilename()==null){
+            throw new IOException("Invalid Image format");
+
         }
-         java.nio.file.Path destination = Paths.get(file.toString(),uniqueFile);
-        //Sao chep file den thu muc dich
-         Files.copy(fileName.getInputStream(),destination, StandardCopyOption.REPLACE_EXISTING);
-         return uniqueFile;
-       }
+
+        // Lấy tên file gốc và làm sạch
+        String originalFileName = StringUtils.cleanPath(file.getOriginalFilename());
+
+        // Kiểm tra nếu tên file trống
+        if (originalFileName.isBlank()) {
+            throw new IOException("File name is empty!");
+        }
+
+        // Lấy phần mở rộng của file (jpg, png, ...)
+        String fileExtension = "";
+        int lastDot = originalFileName.lastIndexOf(".");
+        if (lastDot != -1) {
+            fileExtension = originalFileName.substring(lastDot); // Ví dụ: ".jpg"
+        }
+
+        // Tạo tên file mới với UUID + đuôi file
+        String uniqueFileName = UUID.randomUUID().toString() + fileExtension;
+
+        // Đường dẫn đến thư mục Uploads
+        Path uploadDir = Paths.get("Uploads");
+
+        // Tạo thư mục nếu chưa tồn tại
+        Files.createDirectories(uploadDir);
+
+        // Đường dẫn đầy đủ của file
+        Path destination = uploadDir.resolve(uniqueFileName);
+
+        // Lưu file vào thư mục Uploads
+        Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
+
+        return uniqueFileName;
+    }
+    private boolean isImageFile(MultipartFile file)
+    {
+        String contentType = file.getContentType();
+        return contentType != null && contentType.startsWith("image/");
+    }
     @GetMapping("/{id}")
     public ResponseEntity<?> getIdProduct(@PathVariable("id") String ProductId) {
 
