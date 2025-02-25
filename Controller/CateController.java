@@ -36,6 +36,7 @@ public class CateController {
                     .toList();
             return ResponseEntity.badRequest().body(Emessage);
         }
+        Category savedCategory = categoryService.createCategory(categoryDTO);
         return  ResponseEntity.ok("This is insert CateGory: "+categoryDTO);
     }
     @PutMapping("/{id}")
