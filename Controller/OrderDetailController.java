@@ -22,9 +22,7 @@ public class OrderDetailController {
                           .map(err -> "Field '" + err.getField() + "': " + err.getDefaultMessage())
                           .collect(Collectors.toList());
                   return ResponseEntity.badRequest().body(results);
-
               }
-
           }catch(Exception e){
               e.getMessage();
           }

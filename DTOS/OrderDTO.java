@@ -41,10 +41,7 @@ public class OrderDTO {
     @JsonProperty("shipping_address")
     private String shippingAddress;
 
-
-
     @JsonProperty("payment_method")
     private String paymentMethod;
-
 
 }
