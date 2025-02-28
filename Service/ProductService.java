@@ -7,6 +7,7 @@ import com.project.shopapp.Exception.InvalidParamException;
 import com.project.shopapp.MODELS.Category;
 import com.project.shopapp.MODELS.Product;
 import com.project.shopapp.MODELS.ProductImage;
+import com.project.shopapp.Respones.ProductRespone;
 import com.project.shopapp.Respository.CategoryRespository;
 import com.project.shopapp.Respository.ProductImageRespository;
 import com.project.shopapp.Respository.ProductRespository;
@@ -46,8 +47,22 @@ public class ProductService implements IMPProductService {
     }
 
     @Override
-    public Page<Product> getAllProduct(PageRequest a ) {
-        return productRespository.findAll(a);
+    public Page<ProductRespone> getAllProduct(PageRequest a ) {
+        return productRespository.findAll(a).map(product ->{
+               ProductRespone productRespone =ProductRespone.builder()
+                        .productName(product.getName())
+                        .description(product.getDescription())
+                        .thumbnail(product.getThumbnail())
+                        .title(product.getTitle())
+                        .price(product.getPrice())
+                        .categoryId(product.getCategoryId().getId())
+                        .build();
+               productRespone.setCreatedAt(product.getCreatedAt());
+               productRespone.setUpdatedAt(product.getUpdatedAt());
+               return productRespone;
+        });
+
+
     }
 
     @Override
