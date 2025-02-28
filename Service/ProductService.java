@@ -34,6 +34,7 @@ public class ProductService implements IMPProductService {
                 .price(productDTO.getPrice())
                 .title(productDTO.getTitle())
                 .thumbnail(productDTO.getThumbnail())
+                .description(productDTO.getDescription())
                 .categoryId(existingCategory)
                 .build();
         Product savedProduct = productRespository.save(product);
