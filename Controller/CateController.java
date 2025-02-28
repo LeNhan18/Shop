@@ -50,7 +50,7 @@ public class CateController {
         categoryService.deleteCategory(id);
         return ResponseEntity.ok("Deleted category successfully");
     }
-    @PostMapping("")
+    @PostMapping("/Create")
     public ResponseEntity<?> createCategory(
             @Valid @RequestBody CategoryDTO categoryDTO
             ,BindingResult result){
