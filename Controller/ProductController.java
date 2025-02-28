@@ -5,9 +5,14 @@ import com.project.shopapp.DTOS.ProductDTO;
 import com.project.shopapp.DTOS.ProductImageDTO;
 import com.project.shopapp.MODELS.Product;
 import com.project.shopapp.MODELS.ProductImage;
+import com.project.shopapp.Respones.ProductListRespone;
+import com.project.shopapp.Respones.ProductRespone;
 import com.project.shopapp.Service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -32,8 +37,15 @@ import java.util.UUID;
 public class ProductController {
     private final ProductService productService;
     @GetMapping("")
-    public ResponseEntity<?> getAllProducts(@RequestParam String limit , @RequestParam int page) {
-        return ResponseEntity.ok("limit: "+limit+" page: "+page);
+    public ResponseEntity<ProductListRespone> getAllProducts(@RequestParam int limit , @RequestParam int page) {
+        //tao pageble tu thong tin trang va gioi han
+        PageRequest pageRequest = PageRequest.of(page,limit, Sort.by("CreatedAt").descending());
+        Page<ProductRespone> productPages = productService.getAllProduct(pageRequest);
+        //Lay ra tong so trang
+        int totalPages = productPages.getTotalPages();
+        List<ProductRespone> products= productPages.getContent();
+        return ResponseEntity.ok(ProductListRespone.builder().listProducts(products)
+                .total(totalPages).build());
     }
 //    @PostMapping( value ="",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 //    public ResponseEntity<?>
@@ -153,4 +165,5 @@ BindingResult bindingResult) {
     public ResponseEntity<?> DeleteProduct(@PathVariable long id) {
         return ResponseEntity.status(HttpStatus.OK).body("Product Delete successly");
     }
+
 }
