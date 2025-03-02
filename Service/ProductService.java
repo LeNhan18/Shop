@@ -49,21 +49,7 @@ public class ProductService implements IMPProductService {
 
     @Override
     public Page<ProductRespone> getAllProduct(PageRequest a ) {
-        return productRespository.findAll(a).map(product ->{
-               ProductRespone productRespone =ProductRespone.builder()
-                        .productName(product.getName())
-                        .description(product.getDescription())
-                        .thumbnail(product.getThumbnail())
-                        .title(product.getTitle())
-                        .price(product.getPrice())
-                        .categoryId(product.getCategoryId().getId())
-                        .build();
-               productRespone.setCreatedAt(product.getCreatedAt());
-               productRespone.setUpdatedAt(product.getUpdatedAt());
-               return productRespone;
-        });
-
-
+        return productRespository.findAll(a).map(ProductRespone ::fromProduct);
     }
 
     @Override

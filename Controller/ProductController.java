@@ -158,12 +158,21 @@ BindingResult bindingResult) {
         return contentType != null && contentType.startsWith("image/");
     }
     @GetMapping("/{id}")
-    public ResponseEntity<?> getIdProduct(@PathVariable("id") String ProductId) {
-
-        return ResponseEntity.ok("id : "+ProductId);
+    public ResponseEntity<?> getIdProduct(@PathVariable("id") Long ProductId) {
+       try{
+           Product existingProduct=productService.getProductById(ProductId);
+           return ResponseEntity.ok(ProductRespone.fromProduct(existingProduct));
+       }catch(Exception e){
+           return ResponseEntity.badRequest().body(e.getMessage());
+       }
     }
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> DeleteProduct(@PathVariable long id) {
+    public ResponseEntity<String> DeleteProduct(@PathVariable long id) {
+        try{
+            productService.deleteProduct(id);
+        }catch(Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
         return ResponseEntity.status(HttpStatus.OK).body("Product Delete successly");
     }
 //    @PostMapping("/generatedfakeproduct")
@@ -180,7 +189,7 @@ BindingResult bindingResult) {
                     .description(faker.lorem().sentence())
                     .title(faker.lorem().sentence())
                     .thumbnail("")
-                    .categoryId((long)faker.number().numberBetween(1,3) )
+                    .categoryId((long)faker.number().numberBetween(1,4) )
                     .build();
           try{
               productService.CreateProduct(productDTO);
