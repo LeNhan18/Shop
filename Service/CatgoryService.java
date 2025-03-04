@@ -30,7 +30,7 @@ public class CatgoryService implements IMPCatgoryService {
         return categoryRespository.findAll();
     }
 
-    @Override
+    @Override   
     public Category updateCategory(long categoryId, CategoryDTO categoryDTO) {
         Category existingCategory = getCategoryById(categoryId);
         existingCategory.setName(categoryDTO.getName());
