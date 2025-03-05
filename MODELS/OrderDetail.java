@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Data
+@Table(name = "order_details")
 @Getter
 @Setter
 @AllArgsConstructor
