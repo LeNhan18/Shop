@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Min;
 import lombok.*;
 
 import java.sql.Date;
+import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
@@ -42,7 +43,7 @@ public class OrderDTO {
     private String shippingAddress;
 
     @JsonProperty("shipping_date")
-    private Date shippingDate;
+    private LocalDate shippingDate;
 
     @JsonProperty("payment_method")
     private String paymentMethod;

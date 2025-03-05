@@ -19,7 +19,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OrderController {
     private final IMPOrderService orderService;
-     @PostMapping("")
+     @PostMapping("/create")
+
     public ResponseEntity<?> createOrder (@Valid @RequestBody OrderDTO orderDTO , BindingResult result) {
          try {
              if (result.hasErrors()) {

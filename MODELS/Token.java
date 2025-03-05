@@ -5,6 +5,7 @@ import lombok.*;
 
 @Entity
 @Data
+@Table(name = "tokens")
 @Getter
 @Setter
 @AllArgsConstructor
