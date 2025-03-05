@@ -5,7 +5,6 @@ import com.project.shopapp.Exception.DataNotFoundException;
 import com.project.shopapp.MODELS.Order;
 import com.project.shopapp.MODELS.OrderStatus;
 import com.project.shopapp.MODELS.User;
-import com.project.shopapp.Respones.OrderResponse;
 import com.project.shopapp.Respository.OrderRespository;
 import com.project.shopapp.Respository.UserRespository;
 import com.project.shopapp.Service.IMP.IMPOrderService;
@@ -14,6 +13,7 @@ import lombok.SneakyThrows;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
@@ -24,10 +24,10 @@ import java.util.List;
 public class OrderService implements IMPOrderService{
     private final UserRespository userRespository;
     private final OrderRespository orderRespository;
-    private static  ModelMapper modelMapper;
+    private final  ModelMapper modelMapper;
     @SneakyThrows
     @Override
-    public OrderResponse createOrder(OrderDTO order) {
+    public Order createOrder(OrderDTO order) {
         User user = userRespository.findById(order.getUserId())
                 .orElseThrow(()-> new DataNotFoundException("Cannot find order by id " + order.getUserId()));
         //convert orderDTO ->Order
@@ -44,23 +44,23 @@ public class OrderService implements IMPOrderService{
                 .toLocalDateTime();
         order1.setOrderDate(orderDate);
         order1.setStatus(OrderStatus.PENDING);
-        Date shippingDate  = order.getShippingDate();
-        if (shippingDate!= null || shippingDate.before(new Date())) {
+        LocalDate shippingDate = order.getShippingDate() == null ? LocalDate.now():order.getShippingDate();
+        if (shippingDate.isBefore(LocalDate.now())) {
             throw new DataNotFoundException("Data must be at least today");
         }
+        order1.setShippingDate(shippingDate);
         order1.setActive(true);
         orderRespository.save(order1);
-
-        return modelMapper.map(order1,OrderResponse.class);
+        return order1;
     }
 
     @Override
-    public OrderResponse getOrder(Long id) {
+    public Order getOrder(Long id) {
         return null;
     }
 
     @Override
-    public OrderResponse updateOrder(Long id, OrderDTO order) {
+    public Order updateOrder(Long id, OrderDTO order) {
         return null;
     }
 
@@ -70,7 +70,7 @@ public class OrderService implements IMPOrderService{
     }
 
     @Override
-    public List<OrderResponse> getAllOrders(Long userId) {
+    public List<Order> getAllOrders(Long userId) {
         return List.of();
     }
 }
