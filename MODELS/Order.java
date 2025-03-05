@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -51,7 +52,7 @@ public class Order {
     private String shippingAddress;
 
     @Column(name ="shipping_date")
-    private Date shippingDate;
+    private LocalDate shippingDate;
 
     @Column(name ="tracking_number")
     private String trackingNumber;

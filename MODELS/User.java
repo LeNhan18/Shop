@@ -33,9 +33,9 @@ public class User extends BaseEntity{
     @Column(name ="date_of_birth",nullable = false)
     private Date dateOfBirth;
     @Column(name ="facebook_account")
-    private int facebookAccount;
+    private Integer facebookAccount;
     @Column(name ="google_account")
-    private int googleAccount;
+    private Integer googleAccount;
     @ManyToOne
     @JoinColumn(name = "role_id")
     private Role role;
