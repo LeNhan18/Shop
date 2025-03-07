@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -74,9 +75,15 @@ public class OrderService implements IMPOrderService{
         order1.setUser(existingUser);
         return orderRespository.save(order1);
     }
+
     @Override
     public void deleteOrder(Long id) {
-
+        Order orders = orderRespository.findById(id).orElse(null);
+        //Không xóa cứng hãy xóa mềm
+        if (orders != null) {
+            orders.setActive(false);
+            orderRespository.save(orders);
+        }
     }
 
     @Override

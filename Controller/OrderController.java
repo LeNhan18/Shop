@@ -65,6 +65,7 @@ public class OrderController {
        //Xóa mềm => cập nhật trường active ==false
        @DeleteMapping("/{id}")
        public ResponseEntity<?> deleteOrder (@Valid @PathVariable("id") Long id){
+         //xóa mềm => cập nhật trường active bằng false
            orderService.deleteOrder(id);
            return ResponseEntity.ok("delete order");
        }
