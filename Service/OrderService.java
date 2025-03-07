@@ -56,7 +56,7 @@ public class OrderService implements IMPOrderService{
 
     @Override
     public Order getOrder(Long id) {
-        return null;
+        return orderRespository.findById(id).orElse(null);
     }
 
     @Override
@@ -70,7 +70,7 @@ public class OrderService implements IMPOrderService{
     }
 
     @Override
-    public List<Order> getAllOrders(Long userId) {
-        return List.of();
+    public List<Order> findbyUserid(Long userId) {
+        return orderRespository.findByUserId(userId);
     }
 }

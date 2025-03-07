@@ -10,5 +10,5 @@ public interface IMPOrderService {
     Order getOrder(Long id);
     Order updateOrder(Long id, OrderDTO order);
     void deleteOrder(Long id);
-    List<Order> getAllOrders(Long userId);
+    List<Order> findbyUserid(Long userId);
 }

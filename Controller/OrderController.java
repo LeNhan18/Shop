@@ -1,6 +1,7 @@
 package com.project.shopapp.Controller;
 
 import com.project.shopapp.DTOS.OrderDTO;
+import com.project.shopapp.MODELS.Order;
 import com.project.shopapp.Service.IMP.IMPOrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,19 +27,30 @@ public class OrderController {
                          .toList();
                  return ResponseEntity.badRequest().body(result.getAllErrors());
              }
-             OrderResponse orderResponse = orderService.createOrder(orderDTO);
+             Order order = orderService.createOrder(orderDTO);
              return ResponseEntity.ok("Order created successfuly");
          }catch (Exception e){
              return ResponseEntity.badRequest().body(e.getMessage());
          }
        }
        @GetMapping("/{userId}")
-       public ResponseEntity<?> getOrdersByUserId (@Valid @PathVariable("user_id") Long userId){
+       public ResponseEntity<?> getOrders (@Valid @PathVariable("user_id") Long userId){
            try {
-              return ResponseEntity.ok("get list user in user");
+               List<Order>orders = orderService.findbyUserid(userId);
+              return ResponseEntity.ok(orders);
            }catch (Exception e){
                return ResponseEntity.badRequest().body(e.getMessage());
            }
+       }
+       @GetMapping("/{id}")
+       public ResponseEntity<?> getOrder(@Valid @PathVariable("id") Long orderId){
+         try {
+             Order existingorderService=orderService.getOrder(orderId);
+             return ResponseEntity.ok(existingorderService);
+
+         }catch (Exception e){
+             return ResponseEntity.badRequest().body(e.getMessage());
+         }
        }
       // Cong viec cua admin
        @PutMapping("/{id}")
