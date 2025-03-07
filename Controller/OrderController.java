@@ -1,6 +1,7 @@
 package com.project.shopapp.Controller;
 
 import com.project.shopapp.DTOS.OrderDTO;
+import com.project.shopapp.MODELS.Order;
 import com.project.shopapp.Service.IMP.IMPOrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,7 @@ public class OrderController {
                          .toList();
                  return ResponseEntity.badRequest().body(result.getAllErrors());
              }
-             OrderResponse orderResponse = orderService.createOrder(orderDTO);
+             Order orderResponse = orderService.createOrder(orderDTO);
              return ResponseEntity.ok("Order created successfuly");
          }catch (Exception e){
              return ResponseEntity.badRequest().body(e.getMessage());
