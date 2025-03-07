@@ -59,11 +59,21 @@ public class OrderService implements IMPOrderService{
         return orderRespository.findById(id).orElse(null);
     }
 
+    @SneakyThrows
     @Override
     public Order updateOrder(Long id, OrderDTO order) {
-        return null;
+        Order order1 = orderRespository.findById(id).orElseThrow(()->
+                new DataNotFoundException("Cannot find order with id "+id));
+        User existingUser = userRespository.findById(order.getUserId()).orElseThrow(()->
+                new DataNotFoundException("Cannot find order by user id"+ id));
+        //Tạo một luồng ánh xạ riêng để kiểm soát việc ánh xạ
+        modelMapper.typeMap(OrderDTO.class, Order.class)
+                .addMappings(mapper ->mapper.skip(Order::setId));
+        //Cập nhật các trường của đơn hàng từ OrderDTO
+        modelMapper.map(order, order1);
+        order1.setUser(existingUser);
+        return orderRespository.save(order1);
     }
-
     @Override
     public void deleteOrder(Long id) {
 

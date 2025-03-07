@@ -54,12 +54,18 @@ public class OrderController {
        }
       // Cong viec cua admin
        @PutMapping("/{id}")
-       public ResponseEntity<?> updateOrder (@Valid @PathVariable("id") Long id, @RequestBody OrderDTO orderDTO){
-         return ResponseEntity.ok("update order");
+       public ResponseEntity<?> updateOrder (@Valid @PathVariable("id") Long id,@Valid @RequestBody OrderDTO orderDTO){
+         try{
+             Order order = orderService.updateOrder(id,orderDTO);
+             return ResponseEntity.ok(order);
+         }catch (Exception e){
+             return ResponseEntity.badRequest().body(e.getMessage());
+         }
        }
        //Xóa mềm => cập nhật trường active ==false
        @DeleteMapping("/{id}")
        public ResponseEntity<?> deleteOrder (@Valid @PathVariable("id") Long id){
+           orderService.deleteOrder(id);
            return ResponseEntity.ok("delete order");
        }
     }
