@@ -2,7 +2,10 @@ package com.project.shopapp.Controller;
 
 
 import com.project.shopapp.DTOS.OrderDetailDTO;
+import com.project.shopapp.MODELS.OrderDetail;
+import com.project.shopapp.Service.OrderDetailService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -12,8 +15,10 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/orderdetails")
+@RequiredArgsConstructor
 public class OrderDetailController {
-    @PostMapping("")
+    private final OrderDetailService orderDetailService;
+    @PostMapping("/2")
     public ResponseEntity<?> orderDetails(@Valid @RequestBody OrderDetailDTO orderDetailDTO, BindingResult result)  {
           try{
               if(result.hasErrors()){
@@ -28,16 +33,25 @@ public class OrderDetailController {
           }
           return ResponseEntity.ok().body("Create order details successfully");
     }
+    @PostMapping("")
+    public ResponseEntity<?> createOrderDetails(@Valid @RequestBody OrderDetailDTO orderDet){
+        try{
+            OrderDetail newOrderDet = orderDetailService.CreateOrderDetail(orderDet);
+            return ResponseEntity.ok().body(newOrderDet);
+        }catch(Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
     @GetMapping("/{id}")
     public ResponseEntity<?> getAllOrderDetails(@Valid @PathVariable("id") Long id)  {
-
-//        return ResponseEntity.ok().body("Get all order details successfully "+ id);
-        return ResponseEntity.ok().body("Le Thành Nhan "+ id);
+       OrderDetail orderDetail = orderDetailService.getOrderDetail(id);
+        return ResponseEntity.ok(orderDetail);
     }
     //Lấy ra danh sách của order details của một cái order nào do
     @GetMapping("/order/{id}")
     public ResponseEntity<?> GetOrderDetailss(@Valid @PathVariable("id") Long id){
-        return ResponseEntity.ok().body("Get all order details successfully");
+       List<OrderDetail> orderDetailList = orderDetailService.findById(id);
+        return ResponseEntity.ok(orderDetailList);
     }
     //Cap nhat order detail thong qua id
     @PutMapping("/{id}")
