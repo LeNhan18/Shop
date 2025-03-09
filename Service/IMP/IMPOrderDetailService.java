@@ -14,5 +14,5 @@ public interface IMPOrderDetailService {
 
     void deleteOrderDetail(Long id);
 
-    List<OrderDetail> getOrderDetails(Long orderId);
+    List<OrderDetail> findById(Long orderId);
 }
