@@ -20,8 +20,8 @@ public class OrderDetail {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name ="user_id")
-    private User user;
+    @JoinColumn(name ="order_id")
+    private Order order;
 
     @ManyToOne
     @JoinColumn(name ="product_id")
@@ -30,6 +30,8 @@ public class OrderDetail {
     private Float price;
 
     private int numberOfProducts;
+
+    private Double totalMoney;
 
     @Column(name = "color")
     private String color;
