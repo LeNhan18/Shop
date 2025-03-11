@@ -9,7 +9,6 @@ import com.project.shopapp.Respository.OrderDetailRespository;
 import com.project.shopapp.Respository.OrderRespository;
 import com.project.shopapp.Respository.ProductRespository;
 import com.project.shopapp.Service.IMP.IMPOrderDetailService;
-import com.project.shopapp.Service.IMP.IMPOrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
@@ -33,6 +32,7 @@ public class OrderDetailService implements IMPOrderDetailService {
         OrderDetail orderDetail = OrderDetail.builder()
                 .order(order)
                 .product(product)
+                .price(product.getPrice())
                 .numberOfProducts(orderDetailDTO.getNumberOfProducts())
                 .totalMoney(orderDetailDTO.getTotalMoney())
                 .color(orderDetailDTO.getColor()).build();
@@ -43,12 +43,25 @@ public class OrderDetailService implements IMPOrderDetailService {
     @Override
     public OrderDetail getOrderDetail(Long id) {
         return orderDetailRespository.findById(id)
-                .orElseThrow(()->new DataNotFoundException("Cannot find OrderDetail with id " +id));
+                .orElseThrow(() -> new DataNotFoundException("Cannot find OrderDetail with id " + id));
     }
 
     @Override
-    public OrderDetail updateOrderDetail(Long id, OrderDetail newOrderDetailData) {
-        return null;
+    public OrderDetail updateOrderDetail(Long id, OrderDetailDTO newOrderDetailData) throws DataNotFoundException {
+        //Tìm xem order detail cos tồn tại không
+        OrderDetail exitsingorderDetail = orderDetailRespository.findById(id)
+               .orElseThrow(()->new DataNotFoundException("Cannot find OrderDetail with id " + id));
+        Order exOrder = orderRespository.findById(newOrderDetailData.getOrderId())
+                .orElseThrow(()->new DataNotFoundException("Cannot find Order with id " + id));
+        Product exProduct = productRespository.findById(newOrderDetailData.getProductId())
+                        .orElseThrow(()->new DataNotFoundException("Cannot find Product with id "+id));
+        //Cập nhật thông tin mới
+        exitsingorderDetail.setOrder(exOrder);
+        exitsingorderDetail.setProduct(exProduct);
+        exitsingorderDetail.setNumberOfProducts(newOrderDetailData.getNumberOfProducts());
+        exitsingorderDetail.setColor(newOrderDetailData.getColor());
+        exitsingorderDetail.setTotalMoney(newOrderDetailData.getTotalMoney());
+        return orderDetailRespository.save(exitsingorderDetail );
     }
 
     @Override
