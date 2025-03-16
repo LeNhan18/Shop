@@ -24,6 +24,8 @@ public class UserDTO {
     @NotBlank(message = "Phone number is required")
     private String phoneNumber;
 
+    private String email;
+
 
     private String address;
 

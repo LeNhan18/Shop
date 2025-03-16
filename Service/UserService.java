@@ -22,7 +22,7 @@ import java.util.Optional;
 @RequiredArgsConstructor // Auto create các Contructor với các final field
 public class UserService implements IMPUserService { //Lớp trien khai interface IMPUserService
     private final RoleRespository roleRespository; //Kho lưu truu role duoc tiem qua constructor
-    private UserRespository userRespository;
+    private final UserRespository userRespository;
     private final PasswordEncoder passwordEncoder;//
     private final JWTUtils jwtUtils;
     private final AuthenticationManager authenticationManager;
@@ -38,6 +38,7 @@ public class UserService implements IMPUserService { //Lớp trien khai interfac
                 .fullname(userDTO.getFullname())
                 .phoneNumber(userDTO.getPhoneNumber())
                 .password(userDTO.getPassword())
+                .email(userDTO.getEmail())
                 .address(userDTO.getAddress())
                 .dateOfBirth(new java.sql.Date(userDTO.getDateOfBirth().getTime()))
                 .facebookAccount(userDTO.getFacebookAccountId())
