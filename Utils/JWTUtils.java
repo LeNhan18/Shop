@@ -19,6 +19,8 @@ public class JWTUtils {
 
     @Value("${jwt.experation}")
     private int experation; //Luu vao mot cai bien moi truong
+
+    @Value("${jwt.secretKey}")
     private String secretKey ;
 
     public String generateToken(com.project.shopapp.MODELS.User user){
@@ -47,7 +49,7 @@ public class JWTUtils {
         return Jwts.parserBuilder()
                .setSigningKey(getSignKey())
                .build()
-               .parseClaimsJwt(token)
+               .parseClaimsJws(token)
                .getBody();
     }
     private <T> T extractClaim(String token, Function<Claims,T> claimsTFunction)
