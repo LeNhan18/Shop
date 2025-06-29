@@ -19,5 +19,4 @@ public class BaseRespone {
     @JsonProperty("UpdatedAt")
     private LocalDateTime updatedAt;
 
-
 }
