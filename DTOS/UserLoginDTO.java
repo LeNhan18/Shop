@@ -14,7 +14,7 @@ import lombok.*;
 public class UserLoginDTO {
     @JsonProperty("username")
     @NotBlank(message = "Username cannot be blank")
-    private String username;
+    private String phoneNumber;
 
     @JsonProperty("password")
     @NotBlank(message = "password cannot be blank")
